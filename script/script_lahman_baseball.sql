@@ -50,3 +50,25 @@ WHERE yearid = '2016'
 GROUP BY yearid, field_pos
 ORDER BY total_putouts DESC;
 -- Answer: Infield - 58,934/ Battery - 41,424/ Outfield - 29,560 .
+
+-- Q5.
+SELECT ROUND((SUM(so)/SUM(g)::decimal),2) AS avg_so, ROUND((SUM(hr)/SUM(g)::decimal),2) AS avg_hr,
+CASE 
+	WHEN yearid BETWEEN 1920 AND 1929 THEN '1920s'
+	WHEN yearid BETWEEN 1930 AND 1939 THEN '1930s'
+	WHEN yearid BETWEEN 1940 AND 1949 THEN '1940s'
+	WHEN yearid BETWEEN 1950 AND 1959 THEN '1950s'
+	WHEN yearid BETWEEN 1960 AND 1969 THEN '1960s'
+	WHEN yearid BETWEEN 1970 AND 1979 THEN '1970s'
+	WHEN yearid BETWEEN 1980 AND 1989 THEN '1980s'
+	WHEN yearid BETWEEN 1990 AND 1999 THEN '1990s'
+	WHEN yearid BETWEEN 2000 AND 2009 THEN '2000s'
+END AS decade
+FROM teams
+WHERE yearid BETWEEN 1920 AND 2009
+GROUP BY decade
+ORDER BY decade ASC;
+-- 
+SELECT *
+FROM teams
+WHERE yearid = 2006
