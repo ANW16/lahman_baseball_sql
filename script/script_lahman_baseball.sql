@@ -35,5 +35,18 @@ FULL JOIN vandy_majors as vm
 USING(playerid)
 WHERE vm.playerid IS NOT NULL
 GROUP BY vm.full_name, vm.playerid
-ORDER BY total_salary DESC
+ORDER BY total_salary DESC;
 -- Answer: David Price has earned $81,851,296 from major league .
+
+-- Q4.
+SELECT yearid, SUM(po) AS total_putouts, 
+CASE
+	WHEN pos ILIKE 'OF' THEN 'Outfield'
+	WHEN pos ILIKE 'SS' OR pos ILIKE '%B' THEN 'Infield'
+	WHEN pos ILIKE 'P' OR pos ILIKE 'C'  THEN 'Battery'
+END AS field_pos
+FROM fielding
+WHERE yearid = '2016'
+GROUP BY yearid, field_pos
+ORDER BY total_putouts DESC;
+-- Answer: Infield - 58,934/ Battery - 41,424/ Outfield - 29,560 .
