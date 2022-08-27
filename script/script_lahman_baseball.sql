@@ -154,3 +154,38 @@ GROUP BY tf.franchname, p.park_name, h.attendance, h.games
 ORDER BY atd_avg ASC
 LIMIT 5;
 -- Answer: All have an average attendace of roughly 21,600 or lower .
+
+-- Q9.
+WITH nl_winners AS 
+   (SELECT *
+    FROM awardsmanagers
+    WHERE lgid ILIKE 'NL'
+    AND awardid ILIKE 'TSN Manager of the Year'),
+    al_winners AS 
+   (SELECT *
+	FROM awardsmanagers
+	WHERE lgid ILIKE 'AL'
+    AND awardid ILIKE 'TSN Manager of the Year'),
+	alnl_winners AS 
+   (SELECT nw.playerid, aw.lgid AS al_win, 
+           aw.yearid AS al_year, nw.lgid AS nl_win, 
+           nw.yearid AS nl_year
+	FROM al_winners as aw
+    INNER JOIN nl_winners as nw
+    USING(playerid))
+					
+SELECT (CONCAT(p.namefirst, ' ', p.namelast)) as name, anw.al_year, anw.nl_year, m.teamid
+FROM alnl_winners as anw
+LEFT JOIN people as p
+USING(playerid)
+LEFT JOIN managers as m
+USING(playerid)
+WHERE anw.al_year = m.yearid OR anw.nl_year = m.yearid
+/*LEFT JOIN teams as t 
+USING(teamid)
+LEFT JOIN teamsfranchises as tf
+USING(franchid)*/
+
+SELECT * 
+FROM managers
+WHERE playerid ILIKE 'leylaji99' AND yearid = 2006
