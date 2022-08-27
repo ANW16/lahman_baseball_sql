@@ -79,3 +79,20 @@ USING(playerid)
 WHERE b.sb + b.cs >= 20 AND b.yearid = '2016'
 ORDER BY success_rate DESC;
 -- Answer: Highest success rate belongs to Chris Owings, 91% .
+
+-- Q7a.
+SELECT yearid, teamid, wswin AS ws_loss, w
+FROM teams
+WHERE yearid >= 1970 AND wswin ILIKE 'N'
+ORDER BY w DESC;	
+-- Answer: Seattle Mariners, 116 wins and lost the world series .
+SELECT yearid, teamid, wswin AS ws_win, w
+FROM teams
+WHERE yearid >= 1970 AND wswin ILIKE 'Y'
+ORDER BY w ASC;
+-- Answer: Los Angeles Dodgers, 63 wins and won the world series .
+/*
+The 1981 season had a players' strike, which lasted from June 12 to July 31, and split the season into two halves. 
+Teams that won their division in each half of the season advanced to the playoffs. 
+This was the first split season in American League history and the cause of the low win count.
+*/
