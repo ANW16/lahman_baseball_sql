@@ -68,7 +68,14 @@ FROM teams
 WHERE yearid BETWEEN 1920 AND 2009
 GROUP BY decade
 ORDER BY decade ASC;
--- 
-SELECT *
-FROM teams
-WHERE yearid = 2006
+-- Answer: Both home runs and strikeouts have increased with each decade .
+
+-- Q6.
+SELECT b.yearid, CONCAT(p.namefirst, ' ', p.namelast) AS name, b.sb, b.cs, 
+       ROUND(b.sb/(b.sb+b.cs)::decimal, 2) AS success_rate
+FROM batting AS b
+INNER JOIN people AS p
+USING(playerid)
+WHERE b.sb + b.cs >= 20 AND b.yearid = '2016'
+ORDER BY success_rate DESC;
+-- Answer: Highest success rate belongs to Chris Owings, 91% .
