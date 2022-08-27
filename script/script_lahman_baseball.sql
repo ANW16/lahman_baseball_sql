@@ -124,3 +124,33 @@ INNER JOIN teams as t
 USING (yearid)
 WHERE t.w = msw.most_w AND t.wswin = 'Y';
 -- Answer: Since 1970 teams with the most wins that season had a 26% chance of winning the world series .
+
+-- Q8a. (Top 5)
+SELECT p.park_name, tf.franchname, (h.attendance / h.games) AS atd_avg
+FROM homegames as h
+INNER JOIN parks as p 
+USING(park)
+INNER JOIN teams as t 
+ON t.teamid = h.team 
+INNER JOIN teamsfranchises as tf
+USING(franchid)
+WHERE h.year = 2016 AND h.games >= 10 AND tf.franchname <> 'Washington Senators'
+GROUP BY tf.franchname, p.park_name, h.attendance, h.games
+ORDER BY atd_avg DESC
+LIMIT 5;
+-- Answer: All have an average attendace of roughly 40,000 or higher .
+
+-- Q8b. (Bottem 5)
+SELECT p.park_name, tf.franchname, (h.attendance / h.games) AS atd_avg
+FROM homegames as h
+INNER JOIN parks as p 
+USING(park)
+INNER JOIN teams as t 
+ON t.teamid = h.team 
+INNER JOIN teamsfranchises as tf
+USING(franchid)
+WHERE h.year = 2016 AND h.games >= 10 AND tf.franchname <> 'Washington Senators'
+GROUP BY tf.franchname, p.park_name, h.attendance, h.games
+ORDER BY atd_avg ASC
+LIMIT 5;
+-- Answer: All have an average attendace of roughly 21,600 or lower .
