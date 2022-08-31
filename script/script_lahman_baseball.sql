@@ -183,3 +183,22 @@ WHERE am.awardid ILIKE 'TSN Manager of the Year';
 -- Answer: 2 managers, Jim Leyland and Davey Johnson .
 
 -- Q10.
+WITH highest_hr AS
+   (SELECT playerid, yearid, MAX(hr) as most_hr
+    FROM batting
+    GROUP BY playerid, yearid),
+decade_players AS
+   (SELECT playerid
+    FROM batting
+    GROUP BY playerid
+    HAVING count(playerid) >= 10)
+
+SELECT (CONCAT(p.namefirst, ' ', p.namelast)) as name, hh.most_hr
+FROM decade_players as dp
+LEFT JOIN highest_hr as hh
+USING(playerid)
+LEFT JOIN people as p
+USING(playerid)
+WHERE yearid = 2016 AND most_hr <> 0
+ORDER BY hh.most_hr DESC;
+-- Answer: Nelson Cruz hit his career high of 43 home runs in 2016 .
