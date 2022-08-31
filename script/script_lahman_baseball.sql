@@ -202,3 +202,20 @@ USING(playerid)
 WHERE yearid = 2016 AND most_hr <> 0
 ORDER BY hh.most_hr DESC;
 -- Answer: Nelson Cruz hit his career high of 43 home runs in 2016 .
+
+-- Q11.
+WITH team_salary AS
+   (SELECT s.teamid, SUM(s.salary) as spending, 
+    SUM(t.w) as wins, ROUND((SUM(s.salary)/SUM(t.w))::decimal,2) as cash_per_win, s.yearid
+    FROM salaries as s
+    LEFT JOIN teams as t
+    ON (s.teamid = t.teamid AND s.yearid = t.yearid AND s.lgid = t.lgid)
+    WHERE s.yearid >=2000
+    GROUP BY s.teamid, s.yearid
+    ORDER BY s.teamid, s.yearid ASC)
+    
+SELECT yearid, teamid, spending, wins, cash_per_win, 
+spending-LAG(spending) OVER(PARTITION BY teamid ORDER BY yearid ASC) as spending_diff,
+wins-LAG(wins) OVER(PARTITION BY teamid ORDER BY yearid ASC) as win_diff
+FROM team_salary
+-- Answer: 
