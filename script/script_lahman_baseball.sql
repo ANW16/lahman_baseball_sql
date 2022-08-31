@@ -156,36 +156,30 @@ LIMIT 5;
 -- Answer: All have an average attendace of roughly 21,600 or lower .
 
 -- Q9.
-WITH nl_winners AS 
-   (SELECT *
-    FROM awardsmanagers
-    WHERE lgid ILIKE 'NL'
-    AND awardid ILIKE 'TSN Manager of the Year'),
-    al_winners AS 
-   (SELECT *
+WITH tsn_managers AS
+   (SELECT playerid, awardid, lgid
 	FROM awardsmanagers
-	WHERE lgid ILIKE 'AL'
-    AND awardid ILIKE 'TSN Manager of the Year'),
-	alnl_winners AS 
-   (SELECT nw.playerid, aw.lgid AS al_win, 
-           aw.yearid AS al_year, nw.lgid AS nl_win, 
-           nw.yearid AS nl_year
-	FROM al_winners as aw
-    INNER JOIN nl_winners as nw
-    USING(playerid))
-					
-SELECT (CONCAT(p.namefirst, ' ', p.namelast)) as name, anw.al_year, anw.nl_year, m.teamid
+	WHERE lgid IN ('AL', 'NL')
+    AND awardid ILIKE 'TSN Manager of the Year'
+    GROUP BY playerid, awardid, lgid),
+alnl_winners AS
+   (SELECT playerid
+    FROM tsn_managers
+    WHERE lgid IN ('AL', 'NL')
+    GROUP BY playerid
+    HAVING count(playerid) >= 2)
+
+SELECT (CONCAT(p.namefirst, ' ', p.namelast)) as name, am.yearid, am.lgid, m.teamid
 FROM alnl_winners as anw
+LEFT JOIN awardsmanagers as am
+USING(playerid)
 LEFT JOIN people as p
 USING(playerid)
 LEFT JOIN managers as m
-USING(playerid)
-WHERE anw.al_year = m.yearid OR anw.nl_year = m.yearid
-/*LEFT JOIN teams as t 
-USING(teamid)
-LEFT JOIN teamsfranchises as tf
-USING(franchid)*/
+ON (m.playerid = anw.playerid AND
+m.lgid = am.lgid AND
+m.yearid = am.yearid)
+WHERE am.awardid ILIKE 'TSN Manager of the Year';
+-- Answer: 2 managers, Jim Leyland and Davey Johnson .
 
-SELECT * 
-FROM managers
-WHERE playerid ILIKE 'leylaji99' AND yearid = 2006
+-- Q10.
