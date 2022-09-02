@@ -214,8 +214,27 @@ WITH team_salary AS
     GROUP BY s.teamid, s.yearid
     ORDER BY s.teamid, s.yearid ASC)
     
-SELECT yearid, teamid, spending, wins, cash_per_win, 
-spending-LAG(spending) OVER(PARTITION BY teamid ORDER BY yearid ASC) as spending_diff,
-wins-LAG(wins) OVER(PARTITION BY teamid ORDER BY yearid ASC) as win_diff
+SELECT yearid, teamid, spending, 
+spending-LAG(spending) OVER(PARTITION BY teamid ORDER BY yearid ASC) as spending_diff, 
+wins,
+wins-LAG(wins) OVER(PARTITION BY teamid ORDER BY yearid ASC) as win_diff, 
+cash_per_win
 FROM team_salary
--- Answer: 
+-- Answer: More spending doesn't seem to result in more wins .
+
+-- Q12a.
+WITH hgstats AS 
+    (SELECT year, team, t.park, SUM(hg.attendance) as total_attendace, SUM(w) as total_wins
+    FROM homegames as hg
+    LEFT JOIN teams as t
+    ON (t.teamid = hg.team AND t.yearid = hg.year)
+    WHERE year >=2000 AND team = teamid
+    GROUP BY year, t.park, team
+    ORDER BY team, year ASC)
+
+SELECT year, team, park, total_attendace, 
+total_attendace-LAG(total_attendace) OVER(PARTITION BY team ORDER BY year ASC) as attendace_diff,
+total_wins,
+total_wins-LAG(total_wins) OVER(PARTITION BY team ORDER BY year ASC) as win_diff
+FROM hgstats
+-- 
